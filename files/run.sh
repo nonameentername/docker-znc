@@ -4,18 +4,8 @@ if [[ -z "$ZNC_USER" || -z "$ZNC_PASS" ]]; then
     echo 'Please define $ZNC_USER and $ZNC_PASS'
 fi
 
-/usr/bin/expect > /tmp/output <<EOF
-spawn znc --makepass
-expect "Enter Password"
-send $ZNC_PASS\n
-expect "Confirm Password"
-send $ZNC_PASS\n
-
-expect "</Pass>"
-send $expect_out(buffer)
-EOF
-
-export PASSWORD=$(cat /tmp/output | grep '^[[:space:]]\|^<')
+ZNC_SALT="$(dd if=/dev/urandom bs=16c count=1 | md5sum | awk '{print $1}')"
+export PASSWORD="sha256#$(echo -n ${ZNC_PASS}${ZNC_SALT} | sha256sum | awk '{print $1'})#${ZNC_SALT}#"
 
 mkdir -p /znc/configs
 cat znc.conf | envsubst > /znc/configs/znc.conf

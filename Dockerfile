@@ -5,6 +5,8 @@
 FROM ubuntu:14.04
 MAINTAINER Werner R. Mendizabal "werner.mendizabal@gmail.com"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update
 RUN apt-get install -y znc gettext-base ssl-cert expect
 

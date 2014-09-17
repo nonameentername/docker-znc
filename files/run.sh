@@ -9,6 +9,9 @@ export PASSWORD="sha256#$(echo -n ${ZNC_PASS}${ZNC_SALT} | sha256sum | awk '{pri
 
 mkdir -p /znc/configs
 cat znc.conf | envsubst > /znc/configs/znc.conf
+mkdir .znc
+znc --makepem
+cp .znc/znc.pem /znc/
 chown -R znc:znc /znc
 
-su znc -c "znc -f -d /znc"
+su znc -c "znc -f -r -d /znc"
